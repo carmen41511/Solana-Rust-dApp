@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+declare_id!("32Yu1ovezPREKDrdCNBEMuKGz3TXD5Ss79FNdA6T6BU4");
 
 #[program]
 pub mod myepicproject {
@@ -14,8 +14,8 @@ pub mod myepicproject {
         Ok(())
     }
 
-
-pub fn add_gif(ctx: Context<AddGif>) -> Result <()> {
+// The function now accepts a gif_link param from the user. We also reference the user from the Context
+pub fn add_gif(ctx: Context<AddGif>, gif_link: String) -> Result <()> {
     // Get a reference to the account and increment total_gifs
     let base_account = &mut ctx.accounts.base_account;
     let user = &mut ctx.accounts.user;
@@ -47,9 +47,19 @@ pub struct Initialize<'info> {
 pub struct AddGif<'info>{
     #[account(mut)]
     pub base_account: Account<'info, BaseAccount>,
+    #[account(mut)]
+    pub user: Signer<'info>
+}
+
+// create a custom struct 
+#[derive(Debug, Clone, AnchorSerialize, AnchorDeserialize)]
+pub struct ItemStruct {
+    pub gif_link: String,
+    pub user_address:Pubkey,
 }
 
 #[account]
 pub struct BaseAccount{
     pub total_gifs: u64,
+    pub gif_list: Vec<ItemStruct>,
 }
